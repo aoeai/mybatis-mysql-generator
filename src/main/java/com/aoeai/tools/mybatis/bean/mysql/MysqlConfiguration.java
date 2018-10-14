@@ -1,14 +1,27 @@
 package com.aoeai.tools.mybatis.bean.mysql;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 /**
  * Mysql配置信息
  */
+@Service
 public class MysqlConfiguration {
 
-    private String host = "localhost";
-    private String port = "3306";
-    private String user = "root";
+    @Value("${mmg.mysql.host}")
+    private String host;
+
+    @Value("${mmg.mysql.port}")
+    private String port;
+
+    @Value("${mmg.mysql.user}")
+    private String user;
+
+    @Value("${mmg.mysql.password}")
     private String password;
+
+    @Value("${mmg.mysql.database}")
     private String database;
 
     public String getHost() {

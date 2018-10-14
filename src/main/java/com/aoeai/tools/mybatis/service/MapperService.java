@@ -8,7 +8,10 @@ import com.aoeai.tools.mybatis.utils.Tools;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,11 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class MapperService {
 
+    @Autowired
     private FreemarkerService freemarkerService;
 
-    private EntityService entityService;
+    @Autowired
+    private JavaBeanService javaBeanService;
 
     /**
      * key:表名 value:表信息
@@ -32,18 +38,12 @@ public class MapperService {
      */
     private Map<String, Mapper> mapperXmlMap;
 
-    public MapperService setFreemarkerService(FreemarkerService freemarkerService, EntityService entityService) {
-        this.freemarkerService = freemarkerService;
-        this.entityService = entityService;
-        init();
-        return this;
-    }
-
+    @PostConstruct
     private void init(){
         TABLE_INFO_MAP = new HashMap<>();
         mapperXmlMap = new HashMap<>();
 
-        for (Map.Entry<String, Table> entry : entityService.getTableInfoMap().entrySet()) {
+        for (Map.Entry<String, Table> entry : javaBeanService.getTableInfoMap().entrySet()) {
             Table table = entry.getValue();
             String entityBeanName = Tools.getEntityClassName(table.getName());
             String className = entityBeanName + "Mapper";
@@ -92,11 +92,12 @@ public class MapperService {
             Mapper mapper = entry.getValue();
             Map<String, Object> context = new HashMap<>();
             context.put("mapper", mapper);
+            context.put("table", TABLE_INFO_MAP.get(mapper.getTableName()));
             context.put("methodSavePrefix", ConfigService.getMethodSavePrefix());
             context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
 
             FileTools.buildFile(new File(
-                    ConfigService.getBuildPath()
+                    ConfigService.getGeneratorRootPath()
                             + Tools.getJavaPathFromPackageName(Tools.getMapperPackage())
                             + mapper.getClassName() + ".java"), templateJava, context);
         }
@@ -121,7 +122,7 @@ public class MapperService {
             context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
 
             FileTools.buildFile(new File(
-                    ConfigService.getBuildPath()
+                    ConfigService.getGeneratorRootPath()
                             + Tools.getMapperXmlPath()
                             + Tools.getMapperXmlName(mapper.getClassName()) + ".xml"), templateXml, context);
         }

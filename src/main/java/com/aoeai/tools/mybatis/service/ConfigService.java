@@ -3,20 +3,30 @@ package com.aoeai.tools.mybatis.service;
 import com.aoeai.tools.mybatis.bean.mysql.MysqlConfiguration;
 import com.aoeai.tools.mybatis.bean.mysql.Table;
 import com.aoeai.tools.mybatis.utils.MySqlUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-import java.io.File;
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Map;
 
 /**
  * 配置信息服务
  */
+@Slf4j
+@Service
 public class ConfigService {
 
     private final static String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 
-    private static MysqlConfiguration MYSQL_CONFIG;
+    @Autowired
+    private static MysqlConfiguration mysqlConfiguration;
+
+    @Autowired
+    private MySqlUtil mySqlUtil;
 
     /**
      * key:表名 value:表信息
@@ -26,12 +36,14 @@ public class ConfigService {
     /**
      * 实体类的包名后缀
      */
-    private static String ENTITY_PACKAGE_SUFFIX;
+    @Value("${mmg.config.entityPackageSuffix}")
+    private static String entityPackageSuffix;
 
     /**
      * Mapper类的包名后缀
      */
-    private static String MAPPER_PACKAGE_SUFFIX;
+    @Value("${mmg.config.mapperPackageSuffix}")
+    private static String mapperPackageSuffix;
 
     /**
      * 生成Java文件时需要过滤掉的表名前缀
@@ -41,12 +53,14 @@ public class ConfigService {
     /**
      * 生成文件的主文件夹路径
      */
-    private static String BUILD_PATH;
+    @Value("${mmg.config.generatorRootPath}")
+    private static String generatorRootPath;
 
     /**
      * 工程根路径的包名
      */
-    private static String ROOT_PACKAGE_NAME;
+    @Value("${mmg.config.rootPackageName}")
+    private static String rootPackageName;
 
     /**
      * 方法名前缀-保存
@@ -58,60 +72,41 @@ public class ConfigService {
      */
     private static String METHOD_SELECT_PREFIX = "select";
 
-    private ConfigService() {
+   @PostConstruct
+    private void init() {
+        TABLE_INFO_MAP = mySqlUtil.getDatabaseInfo();
+        generatorRootPath = StringUtils.isBlank(generatorRootPath)
+                ? CURRENT_WORKING_DIRECTORY + "/target/build/" : generatorRootPath;
 
-    }
-
-    /**
-     * @param mysqlConfiguration
-     * @param packageName
-     * @param entitySuffix
-     * @param mapperSuffix
-     * @param generatorRootPath
-     * @return
-     * @throws IOException
-     */
-    public static ConfigService build(MysqlConfiguration mysqlConfiguration, String packageName,
-                                      String entitySuffix, String mapperSuffix, String generatorRootPath) throws IOException {
-        ConfigService configService = new ConfigService();
-        MYSQL_CONFIG = mysqlConfiguration;
-        TABLE_INFO_MAP = MySqlUtil.getDatabaseInfo(MYSQL_CONFIG);
-        BUILD_PATH = StringUtils.isBlank(generatorRootPath) ? CURRENT_WORKING_DIRECTORY + "/target/build/" : generatorRootPath;
-        ROOT_PACKAGE_NAME = packageName;
-        ENTITY_PACKAGE_SUFFIX = entitySuffix;
-        MAPPER_PACKAGE_SUFFIX = mapperSuffix;
-
-        System.out.println("代码生成根目录 " + BUILD_PATH);
-
-        return configService;
+        log.info("代码生成根目录 " + ConfigService.generatorRootPath);
     }
 
     public static String getCurrentWorkingDirectory() {
         return CURRENT_WORKING_DIRECTORY;
     }
 
-    public static MysqlConfiguration getMysqlConfig() {
-        return MYSQL_CONFIG;
+    public static MysqlConfiguration getMysqlConfiguration() {
+        return mysqlConfiguration;
     }
 
     public static String getEntityPackageSuffix() {
-        return ENTITY_PACKAGE_SUFFIX;
+        return entityPackageSuffix;
     }
 
     public static String getMapperPackageSuffix() {
-        return MAPPER_PACKAGE_SUFFIX;
+        return mapperPackageSuffix;
     }
 
     public static String[] getFilterTablePrefix() {
         return FILTER_TABLE_PREFIX;
     }
 
-    public static String getBuildPath() {
-        return BUILD_PATH;
+    public static String getGeneratorRootPath() {
+        return generatorRootPath;
     }
 
     public static String getRootPackageName() {
-        return ROOT_PACKAGE_NAME;
+        return rootPackageName;
     }
 
     public static Map<String, Table> getTableInfoMap() {

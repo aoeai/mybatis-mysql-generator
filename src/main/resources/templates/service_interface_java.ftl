@@ -1,8 +1,8 @@
 package ${service.serviceInterfacePackageName};
 
+import com.aoeai.common.utils.Pagination;
 import ${mapper.entityPackageName}.${mapper.entityBeanName};
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,18 +22,18 @@ public interface ${service.interfaceClassName} {
     int update(${mapper.entityBeanName} ${mapper.entityBeanVarName});
 
 	/**
-	 * 查询列表
+	 * 根据主键查询数据
 	 */
-    List<${mapper.entityBeanName}> ${methodSelectPrefix}List(Map<String,Object> params);
+    ${mapper.entityBeanName} ${methodSelectPrefix}ByPrimaryKey(<#list table.primaryKeyColumns as column>${column.javaFieldType} ${column.javaFieldName}<#if column_has_next>, </#if></#list>);
 
     /**
-     * 查询列表总数
-     */
+    * 查询列表总数
+    */
     long ${methodSelectPrefix}Count(Map<String, Object> params);
 
-    /**
-	 * 查询数据
+	/**
+	 * 查询列表(分页)
 	 */
-    ${mapper.entityBeanName} ${methodSelectPrefix}ByPrimaryKey(long id);
+	Pagination<${mapper.entityBeanName}> ${methodSelectPrefix}List(Map<String,Object> params);
 
 }

@@ -1,0 +1,16 @@
+mmg:
+  mysql:
+    host: localhost
+    port: 3306
+    user: root
+    password: root
+    database: uid
+  config:
+    # 工程根路径的包名
+    rootPackageName: com.aoeai.mybatismysqltest
+    # 实体类的包名后缀
+    entityPackageSuffix: entity
+    # Mapper类的包名后缀
+    mapperPackageSuffix: mapper
+    # 生成文件的主文件夹路径 为空时，默认为当前工程路径下的target/build/
+    generatorRootPath: /Users/aoe/github/mybatis-mysql-generator-test/src/main/

@@ -3,26 +3,31 @@ package com.aoeai.tools.mybatis.utils;
 import com.aoeai.tools.mybatis.bean.mysql.Column;
 import com.aoeai.tools.mybatis.bean.mysql.MysqlConfiguration;
 import com.aoeai.tools.mybatis.bean.mysql.Table;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Service
 public class MySqlUtil {
+
+    @Autowired
+    private MysqlConfiguration mysqlConfiguration;
 
     /**
      * 获取数据库信息
-     * @param config
      * @return key:表名 value:表信息
      */
-    public static Map<String, Table> getDatabaseInfo(MysqlConfiguration config) {
+    public Map<String, Table> getDatabaseInfo() {
         String sql = "select table_name , column_name ,  column_type , column_key , extra , is_nullable ,column_comment, "
                 + "( select tables.table_comment from tables where tables.table_name = columns.table_name and tables.table_schema = '"
-                + config.getDatabase()
+                + mysqlConfiguration.getDatabase()
                 + "') as table_comment"
                 + " from columns where table_schema='"
-                + config.getDatabase() + "' order by table_name";
+                + mysqlConfiguration.getDatabase() + "' order by table_name";
 
         Connection connection = null;
         Statement statement = null;
@@ -31,9 +36,9 @@ public class MySqlUtil {
 
         try {
             connection = DriverManager.getConnection("jdbc:mysql://"
-                            + config.getHost() + ":" + config.getPort()
-                            + "/information_schema", config.getUser(),
-                    config.getPassword());
+                            + mysqlConfiguration.getHost() + ":" + mysqlConfiguration.getPort()
+                            + "/information_schema", mysqlConfiguration.getUser(),
+                    mysqlConfiguration.getPassword());
             statement = connection.createStatement();
             resultSet = statement.executeQuery(sql);
 
@@ -63,7 +68,7 @@ public class MySqlUtil {
             }
 
         } catch (SQLException sqlException) {
-            sqlException.printStackTrace(System.err);
+            sqlException.printStackTrace();
         } finally {
             try {
                 if (resultSet != null && !resultSet.isClosed()) {

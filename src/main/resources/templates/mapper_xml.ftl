@@ -54,6 +54,7 @@
         </#list>
     </sql>
 
+    <!-- 根据主键查询数据 -->
     <select id="${methodSelectPrefix}ByPrimaryKey" parameterType="${mapper.entityPackageName}.${mapper.entityBeanName}" resultMap="${mapper.resultMapId}">
         SELECT
         <include refid="Base_Column_List" />
@@ -67,11 +68,32 @@
     <sql id="selectWhere">
         <where>
         <#list table.columns as column>
-            <if test="${column.javaFieldName} != null">
-                AND ${column.sqlFieldName} = #${r'{'}${column.javaFieldName}},
+            <if test="entity.${column.javaFieldName} != null">
+                AND ${column.sqlFieldName} = #${r'{'}entity.${column.javaFieldName}}
             </if>
         </#list>
         </where>
+        <if test="sort != null">
+            ORDER BY $${r'{'}sort}
+        </if>
+        <if test="pageable != null">
+            LIMIT #${r'{'}offset},#${r'{'}pageSize}
+        </if>
     </sql>
+
+    <!-- 查询列表总数 -->
+    <select id="${methodSelectPrefix}Count" parameterType="java.util.Map" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM ${table.name}
+        <include refid="selectWhere" />
+    </select>
+
+    <!-- 查询列表(分页) -->
+    <select id="${methodSelectPrefix}List" parameterType="java.util.Map" resultMap="${mapper.resultMapId}">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM ${table.name}
+        <include refid="selectWhere" />
+    </select>
 
 </mapper>

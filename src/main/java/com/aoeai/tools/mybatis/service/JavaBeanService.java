@@ -5,29 +5,28 @@ import com.aoeai.tools.mybatis.bean.mysql.Table;
 import com.aoeai.tools.mybatis.utils.FileTools;
 import com.aoeai.tools.mybatis.utils.Tools;
 import freemarker.template.Template;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.*;
 
 /**
  * 实体类服务
  */
-public class EntityService {
+@Service
+public class JavaBeanService {
 
+    @Autowired
     private FreemarkerService freemarkerService;
-
 
     /**
      * key:表名 value:表信息
      */
     private Map<String, Table> TABLE_INFO_MAP;
 
-    public EntityService setFreemarkerService(FreemarkerService freemarkerService) {
-        this.freemarkerService = freemarkerService;
-        init();
-        return this;
-    }
-
+    @PostConstruct
     private void init(){
         TABLE_INFO_MAP = new HashMap<>();
 
@@ -46,17 +45,17 @@ public class EntityService {
     }
 
     /**
-     * 生成JavaBean
+     * 生成数据库实体
      *
      * @throws Exception
      */
-    public void buildEntityJava() throws Exception {
-        Template template = freemarkerService.getTemplate("entity_java.ftl");
+    public void buildEntity() throws Exception {
+        Template template = freemarkerService.getTemplate("bean_entity.ftl");
 
         for (Map.Entry<String, Table> entry : TABLE_INFO_MAP.entrySet()) {
             Table table = entry.getValue();
             table.setEntityClassName(Tools.getEntityClassName(table.getName()));
-            table.setFilePath(ConfigService.getBuildPath()
+            table.setFilePath(ConfigService.getGeneratorRootPath()
                     + Tools.getJavaPathFromPackageName(Tools.getEntityPackage())
                     + table.getEntityClassName() + ".java");
 
