@@ -82,15 +82,6 @@ public class GeneratorTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void GenerateCodeWithSqlServiceTest(){
-        GenerateCodeWithSqlService generateCodeWithSqlService = new GenerateCodeWithSqlService();
-        generateCodeWithSqlService.setJavaBeanService(javaBeanService);
-        generateCodeWithSqlService.setMapperService(mapperService);
-        generateCodeWithSqlService.setServiceFileService(serviceFileService);
-        generateCodeWithSqlService.setControllerService(controllerService);
-    }
-
-    @Test
     public void AddServiceTest() throws Exception {
         addService.addServiceInterface();
     }

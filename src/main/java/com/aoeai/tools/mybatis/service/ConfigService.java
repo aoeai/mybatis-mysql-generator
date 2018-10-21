@@ -20,10 +20,10 @@ import java.util.Map;
 @Service
 public class ConfigService {
 
-    private final static String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
+    private String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 
     @Autowired
-    private static MysqlConfiguration mysqlConfiguration;
+    private MysqlConfiguration mysqlConfiguration;
 
     @Autowired
     private MySqlUtil mySqlUtil;
@@ -31,46 +31,46 @@ public class ConfigService {
     /**
      * key:表名 value:表信息
      */
-    private static Map<String, Table> TABLE_INFO_MAP;
+    private Map<String, Table> TABLE_INFO_MAP;
 
     /**
      * 实体类的包名后缀
      */
     @Value("${mmg.config.entityPackageSuffix}")
-    private static String entityPackageSuffix;
+    private String entityPackageSuffix;
 
     /**
      * Mapper类的包名后缀
      */
     @Value("${mmg.config.mapperPackageSuffix}")
-    private static String mapperPackageSuffix;
+    private String mapperPackageSuffix;
 
     /**
      * 生成Java文件时需要过滤掉的表名前缀
      */
-    private static String[] FILTER_TABLE_PREFIX;
+    private String[] FILTER_TABLE_PREFIX;
 
     /**
      * 生成文件的主文件夹路径
      */
     @Value("${mmg.config.generatorRootPath}")
-    private static String generatorRootPath;
+    private String generatorRootPath;
 
     /**
      * 工程根路径的包名
      */
     @Value("${mmg.config.rootPackageName}")
-    private static String rootPackageName;
+    private String rootPackageName;
 
     /**
      * 方法名前缀-保存
      */
-    private static String METHOD_SAVE_PREFIX = "save";
+    private String METHOD_SAVE_PREFIX = "save";
 
     /**
      * 方法名前缀-查询
      */
-    private static String METHOD_SELECT_PREFIX = "select";
+    private String METHOD_SELECT_PREFIX = "select";
 
    @PostConstruct
     private void init() {
@@ -78,55 +78,47 @@ public class ConfigService {
         generatorRootPath = StringUtils.isBlank(generatorRootPath)
                 ? CURRENT_WORKING_DIRECTORY + "/target/build/" : generatorRootPath;
 
-        log.info("代码生成根目录 " + ConfigService.generatorRootPath);
+        log.info("代码生成根目录 " + generatorRootPath);
     }
 
-    public static String getCurrentWorkingDirectory() {
+    public String getCurrentWorkingDirectory() {
         return CURRENT_WORKING_DIRECTORY;
     }
 
-    public static MysqlConfiguration getMysqlConfiguration() {
+    public MysqlConfiguration getMysqlConfiguration() {
         return mysqlConfiguration;
     }
 
-    public static String getEntityPackageSuffix() {
+    public String getEntityPackageSuffix() {
         return entityPackageSuffix;
     }
 
-    public static String getMapperPackageSuffix() {
+    public String getMapperPackageSuffix() {
         return mapperPackageSuffix;
     }
 
-    public static String[] getFilterTablePrefix() {
+    public String[] getFilterTablePrefix() {
         return FILTER_TABLE_PREFIX;
     }
 
-    public static String getGeneratorRootPath() {
+    public String getGeneratorRootPath() {
         return generatorRootPath;
     }
 
-    public static String getRootPackageName() {
+    public String getRootPackageName() {
         return rootPackageName;
     }
 
-    public static Map<String, Table> getTableInfoMap() {
+    public Map<String, Table> getTableInfoMap() {
         return TABLE_INFO_MAP;
     }
 
-    public static String getMethodSavePrefix() {
+    public String getMethodSavePrefix() {
         return METHOD_SAVE_PREFIX;
     }
 
-    public static String getMethodSelectPrefix() {
+    public String getMethodSelectPrefix() {
         return METHOD_SELECT_PREFIX;
-    }
-
-    public static void setMethodSavePrefix(String methodSavePrefix) {
-        METHOD_SAVE_PREFIX = methodSavePrefix;
-    }
-
-    public static void setMethodSelectPrefix(String methodSelectPrefix) {
-        METHOD_SELECT_PREFIX = methodSelectPrefix;
     }
 
 

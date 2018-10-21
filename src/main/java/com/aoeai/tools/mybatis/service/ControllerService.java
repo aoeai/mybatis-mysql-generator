@@ -36,6 +36,12 @@ public class ControllerService {
     @Autowired
     private MapperService mapperService;
 
+    @Autowired
+    private Tools tools;
+
+    @Autowired
+    private ConfigService configService;
+
     /**
      * key:table名称 value:ControllerClass
      */
@@ -52,11 +58,11 @@ public class ControllerService {
             ControllerClass controllerClass = new ControllerClass();
 
             controllerClass.setClassComment(table.getComment() + "控制器");
-            controllerClass.setClassName(Tools.getControllerClassName(tableName));
-            controllerClass.setPackageName(Tools.getControllerPackage());
+            controllerClass.setClassName(tools.getControllerClassName(tableName));
+            controllerClass.setPackageName(tools.getControllerPackage());
             controllerClass.setServiceClass(serviceClass);
-            controllerClass.setFilePath(ConfigService.getGeneratorRootPath()
-                    + Tools.getJavaPathFromPackageName(Tools.getControllerPackage())
+            controllerClass.setFilePath(configService.getGeneratorRootPath()
+                    + tools.getJavaPathFromPackageName(tools.getControllerPackage())
                     + controllerClass.getClassName() + ".java");
 
             controllerClassMap.put(tableName, controllerClass);
@@ -84,8 +90,8 @@ public class ControllerService {
             context.put("primaryKeyColumns", table.getPrimaryKeyColumns());
             context.put("primaryKeyGetMethodList", primaryKeyGetMethodList(table.getPrimaryKeyColumns()));
 
-            context.put("methodSavePrefix", ConfigService.getMethodSavePrefix());
-            context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
+            context.put("methodSavePrefix", configService.getMethodSavePrefix());
+            context.put("methodSelectPrefix", configService.getMethodSelectPrefix());
 
             FileTools.buildFile(new File(controllerClass.getFilePath()), templateJava, context);
         }

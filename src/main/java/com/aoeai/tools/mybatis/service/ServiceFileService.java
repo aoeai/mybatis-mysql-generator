@@ -47,6 +47,13 @@ public class ServiceFileService {
      */
     private List<String> updateDataInitList;
 
+    @Autowired
+    private Tools tools;
+
+    @Autowired
+    private ConfigService configService;
+
+
     @PostConstruct
     private void init(){
         serviceClassMap = new HashMap<>();
@@ -57,18 +64,18 @@ public class ServiceFileService {
             String tableName = table.getName();
 
             serviceClass.setMapper(mapperService.getMapper(tableName));
-            serviceClass.setInterfaceClassName(Tools.getServiceInterfaceClassName(tableName));
+            serviceClass.setInterfaceClassName(tools.getServiceInterfaceClassName(tableName));
             serviceClass.setInterfaceVarClassName(StringUtils.uncapitalize(serviceClass.getInterfaceClassName()));
-            serviceClass.setImplClassName(Tools.getServiceImplClassName(tableName));
+            serviceClass.setImplClassName(tools.getServiceImplClassName(tableName));
             serviceClass.setRootPackageName(mapperService.getMapper(tableName).getRootPackageName());
             serviceClass.setClassComment(table.getComment() + "服务");
-            serviceClass.setServiceInterfacePackageName(Tools.getServiceInterfacePackage());
-            serviceClass.setServiceImplPackageName(Tools.getServiceImplPackage());
-            serviceClass.setInterfaceFilePath(ConfigService.getGeneratorRootPath()
-                    + Tools.getJavaPathFromPackageName(Tools.getServiceInterfacePackage())
+            serviceClass.setServiceInterfacePackageName(tools.getServiceInterfacePackage());
+            serviceClass.setServiceImplPackageName(tools.getServiceImplPackage());
+            serviceClass.setInterfaceFilePath(configService.getGeneratorRootPath()
+                    + Tools.getJavaPathFromPackageName(tools.getServiceInterfacePackage())
                     + serviceClass.getInterfaceClassName() + ".java");
-            serviceClass.setImplFilePath(ConfigService.getGeneratorRootPath()
-                    + Tools.getJavaPathFromPackageName(Tools.getServiceImplPackage())
+            serviceClass.setImplFilePath(configService.getGeneratorRootPath()
+                    + Tools.getJavaPathFromPackageName(tools.getServiceImplPackage())
                     + serviceClass.getImplClassName() + ".java");
 
             serviceClassMap.put(tableName, serviceClass);
@@ -99,8 +106,8 @@ public class ServiceFileService {
             Mapper mapper = serviceClass.getMapper();
             context.put("mapper", mapper);
             context.put("table", mapperService.getTableInfoMap().get(mapper.getTableName()));
-            context.put("methodSavePrefix", ConfigService.getMethodSavePrefix());
-            context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
+            context.put("methodSavePrefix", configService.getMethodSavePrefix());
+            context.put("methodSelectPrefix", configService.getMethodSelectPrefix());
 
             FileTools.buildFile(new File(serviceClass.getInterfaceFilePath()), templateJava, context);
         }
@@ -123,8 +130,8 @@ public class ServiceFileService {
             Table table = mapperService.getTableInfoMap().get(mapper.getTableName());
             context.put("table", table);
             context.put("primaryKeySetNullList", primaryKeySetNullList(table.getPrimaryKeyColumns()));
-            context.put("methodSavePrefix", ConfigService.getMethodSavePrefix());
-            context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
+            context.put("methodSavePrefix", configService.getMethodSavePrefix());
+            context.put("methodSelectPrefix", configService.getMethodSelectPrefix());
             context.put("saveDataInitList", saveDataInitList);
             context.put("updateDataInitList", updateDataInitList);
 

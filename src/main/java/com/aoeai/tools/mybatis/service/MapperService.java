@@ -38,6 +38,12 @@ public class MapperService {
      */
     private Map<String, Mapper> mapperXmlMap;
 
+    @Autowired
+    private Tools tools;
+
+    @Autowired
+    private ConfigService configService;
+
     @PostConstruct
     private void init(){
         TABLE_INFO_MAP = new HashMap<>();
@@ -45,7 +51,7 @@ public class MapperService {
 
         for (Map.Entry<String, Table> entry : javaBeanService.getTableInfoMap().entrySet()) {
             Table table = entry.getValue();
-            String entityBeanName = Tools.getEntityClassName(table.getName());
+            String entityBeanName = tools.getEntityClassName(table.getName());
             String className = entityBeanName + "Mapper";
 
             Mapper mapper = new Mapper();
@@ -54,9 +60,9 @@ public class MapperService {
             mapper.setEntityBeanName(entityBeanName);
             mapper.setResultMapId(Tools.getStartSmallName(entityBeanName + "Map"));
             mapper.setEntityBeanVarName(StringUtils.uncapitalize(entityBeanName));
-            mapper.setMapperPackageName(Tools.getMapperPackage());
-            mapper.setRootPackageName(ConfigService.getRootPackageName());
-            mapper.setEntityPackageName(Tools.getEntityPackage());
+            mapper.setMapperPackageName(tools.getMapperPackage());
+            mapper.setRootPackageName(configService.getRootPackageName());
+            mapper.setEntityPackageName(tools.getEntityPackage());
             mapper.setClassComment(table.getComment());
             mapper.setVarName(StringUtils.uncapitalize(className));
 
@@ -93,12 +99,12 @@ public class MapperService {
             Map<String, Object> context = new HashMap<>();
             context.put("mapper", mapper);
             context.put("table", TABLE_INFO_MAP.get(mapper.getTableName()));
-            context.put("methodSavePrefix", ConfigService.getMethodSavePrefix());
-            context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
+            context.put("methodSavePrefix", configService.getMethodSavePrefix());
+            context.put("methodSelectPrefix", configService.getMethodSelectPrefix());
 
             FileTools.buildFile(new File(
-                    ConfigService.getGeneratorRootPath()
-                            + Tools.getJavaPathFromPackageName(Tools.getMapperPackage())
+                    configService.getGeneratorRootPath()
+                            + Tools.getJavaPathFromPackageName(tools.getMapperPackage())
                             + mapper.getClassName() + ".java"), templateJava, context);
         }
     }
@@ -118,11 +124,11 @@ public class MapperService {
             Map<String, Object> context = new HashMap<>();
             context.put("mapper", mapper);
             context.put("table", table);
-            context.put("methodSavePrefix", ConfigService.getMethodSavePrefix());
-            context.put("methodSelectPrefix", ConfigService.getMethodSelectPrefix());
+            context.put("methodSavePrefix", configService.getMethodSavePrefix());
+            context.put("methodSelectPrefix", configService.getMethodSelectPrefix());
 
             FileTools.buildFile(new File(
-                    ConfigService.getGeneratorRootPath()
+                    configService.getGeneratorRootPath()
                             + Tools.getMapperXmlPath()
                             + Tools.getMapperXmlName(mapper.getClassName()) + ".xml"), templateXml, context);
         }

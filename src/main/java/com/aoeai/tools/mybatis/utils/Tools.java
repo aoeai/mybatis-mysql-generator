@@ -2,6 +2,8 @@ package com.aoeai.tools.mybatis.utils;
 
 import com.aoeai.tools.mybatis.service.ConfigService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.HashMap;
@@ -10,9 +12,13 @@ import java.util.StringTokenizer;
 
 
 /**
- *
+ * 工具类
  */
+@Component
 public final class Tools {
+
+	@Autowired
+	private ConfigService configService;
 
 	private final static String TYPE_STRING = "String";
 	private final static String TYPE_INTEGER = "Integer";
@@ -81,9 +87,9 @@ public final class Tools {
 	 * @param tableName 表名
 	 * @return
 	 */
-	public static String getEntityClassName(String tableName) {
-		if (ConfigService.getFilterTablePrefix() != null) {
-			for (String str : ConfigService.getFilterTablePrefix()) {
+	public String getEntityClassName(String tableName) {
+		if (configService.getFilterTablePrefix() != null) {
+			for (String str : configService.getFilterTablePrefix()) {
 				tableName = tableName.toLowerCase().replaceAll(str, "");
 			}
 		}
@@ -95,7 +101,7 @@ public final class Tools {
 	 * @param tableName
 	 * @return service接口类名称
 	 */
-	public static String getServiceInterfaceClassName(String tableName){
+	public String getServiceInterfaceClassName(String tableName){
 		return getEntityClassName(tableName) + "Service";
 	}
 
@@ -104,7 +110,7 @@ public final class Tools {
 	 * @param tableName
 	 * @return service实现类名称
 	 */
-	public static String getServiceImplClassName(String tableName){
+	public String getServiceImplClassName(String tableName){
 		return getServiceInterfaceClassName(tableName) + "Impl";
 	}
 
@@ -113,7 +119,7 @@ public final class Tools {
 	 * @param tableName
 	 * @return Controller类名称
 	 */
-	public static String getControllerClassName(String tableName){
+	public String getControllerClassName(String tableName){
 		return getEntityClassName(tableName) + "Controller";
 	}
 
@@ -132,8 +138,8 @@ public final class Tools {
 	/**
 	 * @return 实体类包名
 	 */
-	public static String getEntityPackage() {
-		return ConfigService.getRootPackageName() + "." + ConfigService.getEntityPackageSuffix();
+	public String getEntityPackage() {
+		return configService.getRootPackageName() + "." + configService.getEntityPackageSuffix();
 	}
 
 	/**
@@ -166,29 +172,29 @@ public final class Tools {
 	/**
 	 * @return Mapper类包名
 	 */
-	public static String getMapperPackage() {
-		return ConfigService.getRootPackageName() + "." + ConfigService.getMapperPackageSuffix();
+	public String getMapperPackage() {
+		return configService.getRootPackageName() + "." + configService.getMapperPackageSuffix();
 	}
 
 	/**
 	 * @return service接口类包名
 	 */
-	public static String getServiceInterfacePackage() {
-		return ConfigService.getRootPackageName() + ".service";
+	public String getServiceInterfacePackage() {
+		return configService.getRootPackageName() + ".service";
 	}
 
 	/**
 	 * @return service实现类包名
 	 */
-	public static String getServiceImplPackage() {
+	public String getServiceImplPackage() {
 		return getServiceInterfacePackage() + ".impl";
 	}
 
 	/**
 	 * @return Controller类包名
 	 */
-	public static String getControllerPackage() {
-		return ConfigService.getRootPackageName() + ".controller";
+	public String getControllerPackage() {
+		return configService.getRootPackageName() + ".controller";
 	}
 
 

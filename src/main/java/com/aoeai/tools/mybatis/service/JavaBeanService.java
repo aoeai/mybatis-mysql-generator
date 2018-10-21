@@ -26,18 +26,24 @@ public class JavaBeanService {
      */
     private Map<String, Table> TABLE_INFO_MAP;
 
+    @Autowired
+    private Tools tools;
+
+    @Autowired
+    private ConfigService configService;
+
     @PostConstruct
     private void init(){
         TABLE_INFO_MAP = new HashMap<>();
 
-        for (Map.Entry<String, Table> entry : ConfigService.getTableInfoMap().entrySet()) {
+        for (Map.Entry<String, Table> entry : configService.getTableInfoMap().entrySet()) {
             Table table = entry.getValue();
-            table.setClassName(Tools.getEntityClassName(table.getName()));
-            table.setEntityPackageName(Tools.getEntityPackage());
+            table.setClassName(tools.getEntityClassName(table.getName()));
+            table.setEntityPackageName(tools.getEntityPackage());
 
             for (Column column : table.getColumns()) {
-                column.setJavaFieldType(Tools.getPropertyType(column.getSqlFieldType()));
-                column.setJavaFieldName(Tools.fixName(column.getSqlFieldName()));
+                column.setJavaFieldType(tools.getPropertyType(column.getSqlFieldType()));
+                column.setJavaFieldName(tools.fixName(column.getSqlFieldName()));
             }
 
             TABLE_INFO_MAP.put(entry.getKey(), table);
@@ -54,9 +60,9 @@ public class JavaBeanService {
 
         for (Map.Entry<String, Table> entry : TABLE_INFO_MAP.entrySet()) {
             Table table = entry.getValue();
-            table.setEntityClassName(Tools.getEntityClassName(table.getName()));
-            table.setFilePath(ConfigService.getGeneratorRootPath()
-                    + Tools.getJavaPathFromPackageName(Tools.getEntityPackage())
+            table.setEntityClassName(tools.getEntityClassName(table.getName()));
+            table.setFilePath(configService.getGeneratorRootPath()
+                    + Tools.getJavaPathFromPackageName(tools.getEntityPackage())
                     + table.getEntityClassName() + ".java");
 
             Map<String, Object> context = new HashMap<>();
