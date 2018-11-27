@@ -92,10 +92,10 @@ public class JavaBeanService {
         for (Column column : columns) {
             String type = column.getJavaFieldType();
             if(Tools.TYPE_DATE.equals(type)){
-                set.add(Tools.JAVA_TYPE_MAP.get(type));
+                set.add(tools.getJavaTypeFullName(type));
             }
             if(Tools.TYPE_BIGDECIMAL.equals(type)){
-                set.add(Tools.JAVA_TYPE_MAP.get(type));
+                set.add(tools.getJavaTypeFullName(type));
             }
         }
 

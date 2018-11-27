@@ -46,9 +46,10 @@ public class ConfigService {
     private String mapperPackageSuffix;
 
     /**
-     * 生成Java文件时需要过滤掉的表名前缀
+     * 生成Java文件时需要过滤掉的表名前缀（,分割）
      */
-    private String[] FILTER_TABLE_PREFIX;
+    @Value("${mmg.config.filterTablePrefix}")
+    private String FILTER_TABLE_PREFIX;
 
     /**
      * 生成文件的主文件夹路径
@@ -98,7 +99,16 @@ public class ConfigService {
     }
 
     public String[] getFilterTablePrefix() {
-        return FILTER_TABLE_PREFIX;
+       String split = ",";
+       String[] arr;
+
+       if(FILTER_TABLE_PREFIX.contains(split)){
+           arr = FILTER_TABLE_PREFIX.split(split);
+       }else {
+           arr = new String[]{FILTER_TABLE_PREFIX};
+       }
+
+       return arr;
     }
 
     public String getGeneratorRootPath() {

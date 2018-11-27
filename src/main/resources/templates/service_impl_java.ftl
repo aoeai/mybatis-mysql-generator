@@ -3,7 +3,7 @@ package ${service.serviceImplPackageName};
 import com.aoeai.common.utils.Page;
 import com.aoeai.common.utils.PageHelper;
 import com.aoeai.common.utils.Pagination;
-import com.aoeai.helper.ServiceHelper;
+import com.aoeai.common.utils.ServiceHelper;
 import ${mapper.entityPackageName}.${mapper.entityBeanName};
 import ${mapper.mapperPackageName}.${mapper.className};
 import ${service.serviceInterfacePackageName}.${service.interfaceClassName};
@@ -76,7 +76,7 @@ public class ${service.implClassName} implements ${service.interfaceClassName} {
 	public Pagination<${mapper.entityBeanName}> ${methodSelectPrefix}List(Map<String,Object> params){
         long totalCount = selectCount(params);
         Page page = ServiceHelper.buildPage(totalCount, params);
-        List records = workerNodeMapper.selectList(params);
+        List records = ${mapper.varName}.selectList(params);
 
         return PageHelper.buildPagination(page, records);
     }

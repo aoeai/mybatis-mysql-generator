@@ -2,7 +2,7 @@ package ${controller.packageName};
 
 import com.aoeai.common.exception.PageException;
 import com.aoeai.common.utils.Pagination;
-import com.aoeai.helper.ControllerHelper;
+import com.aoeai.common.utils.ControllerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +22,13 @@ public class ${controller.className} {
     private ${service.interfaceClassName} ${service.interfaceVarClassName};
 
     @PostMapping
-    public ResponseEntity ${methodSavePrefix}(@Validated ${mapper.entityBeanName} ${mapper.entityBeanVarName}, BindingResult bindingResult){
+    public ResponseEntity ${methodSavePrefix}(@RequestBody @Validated ${mapper.entityBeanName} ${mapper.entityBeanVarName}, BindingResult bindingResult){
         StringBuilder errors = ControllerHelper.getErrorMessage(bindingResult);
         if (errors != null){
             return ResponseEntity.badRequest().body(errors);
         }
 
-        int result = ${service.interfaceVarClassName}.${methodSavePrefix}(workerNode);
+        int result = ${service.interfaceVarClassName}.${methodSavePrefix}(${mapper.entityBeanVarName});
         if (result == 1){
             return ResponseEntity.status(HttpStatus.CREATED).body(${mapper.entityBeanVarName});
         }
@@ -76,7 +76,7 @@ public class ${controller.className} {
      * @param pageNum    当前页
      * @return
      */
-    @GetMapping
+    @GetMapping(value="/list")
     public ResponseEntity records(${mapper.entityBeanName} ${mapper.entityBeanVarName}, int pageSize, int pageNum) {
         Map<String, Object> params = ControllerHelper.getParams(${mapper.entityBeanVarName}, pageSize, pageNum);
 

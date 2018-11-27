@@ -73,12 +73,6 @@
             </if>
         </#list>
         </where>
-        <if test="sort != null">
-            ORDER BY $${r'{'}sort}
-        </if>
-        <if test="pageable != null">
-            LIMIT #${r'{'}offset},#${r'{'}pageSize}
-        </if>
     </sql>
 
     <!-- 查询列表总数 -->
@@ -94,6 +88,12 @@
         <include refid="Base_Column_List" />
         FROM ${table.name}
         <include refid="selectWhere" />
+        <if test="sort != null">
+            ORDER BY $${r'{'}sort}
+        </if>
+        <if test="pageable != null">
+            LIMIT #${r'{'}offset},#${r'{'}pageSize}
+        </if>
     </select>
 
 </mapper>

@@ -1,10 +1,13 @@
 package com.aoeai.tools.mybatis.utils;
 
+import com.aoeai.tools.exception.OppsException;
 import com.aoeai.tools.mybatis.service.ConfigService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +18,7 @@ import java.util.StringTokenizer;
  * 工具类
  */
 @Component
+@Slf4j
 public final class Tools {
 
 	@Autowired
@@ -31,8 +35,16 @@ public final class Tools {
 	 * 数据类型映射
 	 * key 数据库类型；value Java类型
 	 */
-	private static Map<String, String> COLUMN_JAVA_TYPE_MAP;
-	static {
+	private Map<String, String> COLUMN_JAVA_TYPE_MAP;
+
+	/**
+	 * Java类型映射
+	 * key 短名称；value 全名
+	 */
+	private Map<String, String> JAVA_TYPE_MAP;
+
+	@PostConstruct
+	private void init(){
 		COLUMN_JAVA_TYPE_MAP = new HashMap();
 		COLUMN_JAVA_TYPE_MAP.put("varchar", TYPE_STRING);
 		COLUMN_JAVA_TYPE_MAP.put("int", TYPE_INTEGER);
@@ -47,21 +59,27 @@ public final class Tools {
 		COLUMN_JAVA_TYPE_MAP.put("smallint", TYPE_INTEGER);
 		COLUMN_JAVA_TYPE_MAP.put("text", TYPE_STRING);
 		COLUMN_JAVA_TYPE_MAP.put("float", TYPE_FLOAT);
-        COLUMN_JAVA_TYPE_MAP.put("decimal", TYPE_BIGDECIMAL);
-	}
+		COLUMN_JAVA_TYPE_MAP.put("decimal", TYPE_BIGDECIMAL);
+		COLUMN_JAVA_TYPE_MAP.put("longtext", TYPE_STRING);
 
-	/**
-	 * Java类型映射
-	 * key 短名称；value 全名
-	 */
-	public final static Map<String, String> JAVA_TYPE_MAP;
-	static {
 		JAVA_TYPE_MAP = new HashMap<>();
 		JAVA_TYPE_MAP.put(TYPE_LONG, "java.lang.Long");
 		JAVA_TYPE_MAP.put(TYPE_DATE, "java.util.Date");
+		JAVA_TYPE_MAP.put(TYPE_BIGDECIMAL, "java.math.BigDecimal");
 	}
 
-	public static String getPropertyType(String columnType) {
+	public String getJavaTypeFullName(String shortName){
+		String fullName = JAVA_TYPE_MAP.get(shortName);
+
+		if(fullName == null){
+			throw new OppsException(shortName
+					+ " 不存在，请在com.aoeai.tools.mybatis.utils.Tools.java 中添加对应的类型： init()方法中 JAVA_TYPE_MAP");
+		}
+
+		return fullName;
+	}
+
+	public String getPropertyType(String columnType) {
 		if (columnType.contains("(")) {
 			columnType = columnType.substring(0,
 					columnType.indexOf("("));
@@ -69,14 +87,20 @@ public final class Tools {
 		String tmp = columnType.toLowerCase();
 		StringTokenizer st = new StringTokenizer(tmp);
 		String type = COLUMN_JAVA_TYPE_MAP.get(st.nextToken());
-		return type == null ? columnType + " 未知" : type;
+
+		if(type == null){
+			throw new OppsException(columnType
+					+ " 未知，请在com.aoeai.tools.mybatis.utils.Tools.java 中添加对应的类型： init()方法中 COLUMN_JAVA_TYPE_MAP");
+		}
+
+		return type;
 	}
 
 	/**
 	 * @param className
 	 * @return 类的全名
 	 */
-	public static String getClassFullName(String className){
+	public String getClassFullName(String className){
 		String name = JAVA_TYPE_MAP.get(className);
 		return name == null ? className + "还没有配置全名" : name;
 	}
@@ -90,7 +114,7 @@ public final class Tools {
 	public String getEntityClassName(String tableName) {
 		if (configService.getFilterTablePrefix() != null) {
 			for (String str : configService.getFilterTablePrefix()) {
-				tableName = tableName.toLowerCase().replaceAll(str, "");
+				tableName = tableName.toLowerCase().replaceAll(str.toLowerCase(), "");
 			}
 		}
 

@@ -35,15 +35,14 @@ public class GeneratorTest extends AbstractTestNGSpringContextTests {
     private void init() {
         // 自定义：保存时数据初始化
         List<String> saveDataInitList = new ArrayList<>();
-        saveDataInitList.add("setCreated(date);");
-        saveDataInitList.add("setLaunchDate(date);");
-        saveDataInitList.add("setModified(date);");
+        saveDataInitList.add("setAddTime(date);");
+        saveDataInitList.add("setUpdateTime(date);");
         serviceFileService.setSaveDataInitList(saveDataInitList);
 
         // 自定义：更新时数据初始化
         List<String> updateDataInitList = new ArrayList<>();
-        updateDataInitList.add("setCreated(null);");
-        updateDataInitList.add("setModified(new Date());");
+        updateDataInitList.add("setAddTime(null);");
+        updateDataInitList.add("setUpdateTime(new Date());");
         serviceFileService.setUpdateDataInitList(updateDataInitList);
     }
 

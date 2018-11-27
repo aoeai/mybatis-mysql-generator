@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages={"com.aoeai.tools.mybatis.*"})
+@ComponentScan(basePackages={"com.aoeai.tools.*"})
 public class Application {
 
     public static void main(String[] args) {
