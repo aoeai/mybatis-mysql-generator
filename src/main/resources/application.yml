@@ -1,13 +1,13 @@
 mmg:
   mysql:
     # 数据库地址
-    host: 139.196.96.220
+    host: localhost
     # 数据库端口
     port: 3306
     # 数据库用户名
     user: root
     # 数据库密码
-    password: pBPN$VOZc1h$nVRd
+    password: 090j
     # 数据库的库名
     database: ycg_goods_test
   config:
