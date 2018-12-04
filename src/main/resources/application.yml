@@ -7,12 +7,12 @@ mmg:
     # 数据库用户名
     user: root
     # 数据库密码
-    password: 090j
+    password: xxxxcc
     # 数据库的库名
-    database: ycg_goods_test
+    database: ycg_image_test
   config:
     # 工程根路径的包名
-    rootPackageName: com.ycg9.goods
+    rootPackageName: com.ycg9.image
     # 实体类的包名后缀
     entityPackageSuffix: entity
     # Mapper类的包名后缀
@@ -21,3 +21,4 @@ mmg:
     filterTablePrefix: ycg
     # 生成文件的主文件夹路径 为空时，默认为当前工程路径下的target/build/ 必须有结束的"/"
 #    generatorRootPath: /Users/aoe/company/yunchuan/ycg9-goods/src/main/
+    generatorRootPath: /Users/aoe/company/yunchuan/ycg9-image/src/main/

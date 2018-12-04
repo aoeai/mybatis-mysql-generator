@@ -78,7 +78,8 @@ public class ${controller.className} {
      */
     @GetMapping(value="/list")
     public ResponseEntity records(${mapper.entityBeanName} ${mapper.entityBeanVarName}, int pageSize, int pageNum) {
-        Map<String, Object> params = ControllerHelper.getParams(${mapper.entityBeanVarName}, pageSize, pageNum);
+        String sort = "add_time desc"; // 排序语句
+        Map<String, Object> params = ControllerHelper.getParams(${mapper.entityBeanVarName}, pageSize, pageNum, sort);
 
         Pagination<${mapper.entityBeanName}> pagination;
         try {
